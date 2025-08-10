@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>BaseMaker – Generatore di Basi</title>
+  <meta name="theme-color" content="#ff7ab6"/>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="assets/icon-192.png" sizes="192x192">
+  <link rel="apple-touch-icon" href="assets/icon-192.png">
+  <link rel="stylesheet" href="style.css" />
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <header>
+    <h1>🎶 BaseMaker</h1>
+    <p class="subtitle">Genera una base musicale in pochi secondi — tutto nel tuo browser.</p>
+    <button id="installBtn" hidden>Installa come app</button>
+  </header>
+
+  <main>
+    <section class="panel">
+      <h2>Impostazioni</h2>
+      <div class="grid">
+        <label>Genere
+          <select id="genre">
+            <option>Pop</option>
+            <option>Trap</option>
+            <option>R&B</option>
+            <option>Reggaeton</option>
+            <option>Rock</option>
+          </select>
+        </label>
+
+        <label>Tonalità
+          <select id="key">
+            <option>C</option><option>C#</option><option>D</option><option>D#</option>
+            <option>E</option><option>F</option><option>F#</option><option>G</option>
+            <option>G#</option><option>A</option><option>A#</option><option>B</option>
+          </select>
+        </label>
+
+        <label>Scala
+          <select id="scale">
+            <option>Maggiore</option>
+            <option>Minore</option>
+          </select>
+        </label>
+
+        <label>BPM
+          <input id="bpm" type="range" min="60" max="180" step="1" value="110"/>
+          <span id="bpmVal">110</span>
+        </label>
+
+        <label>Lunghezza (misure)
+          <select id="bars">
+            <option>4</option>
+            <option selected>8</option>
+            <option>16</option>
+          </select>
+        </label>
+
+        <label>Swing (%)
+          <input id="swing" type="range" min="0" max="60" step="1" value="0"/>
+          <span id="swingVal">0</span>
+        </label>
+
+        <label>Umanizzazione
+          <input id="humanize" type="checkbox" checked />
+        </label>
+      </div>
+
+      <div class="btnrow">
+        <button id="generate">🎼 Genera progressione</button>
+        <button id="randomize">🎲 Sorprendimi</button>
+      </div>
+
+      <p id="progression" class="progression">Progressione: —</p>
+    </section>
+
+    <section class="panel">
+      <h2>Riproduzione</h2>
+      <div class="btnrow">
+        <button id="start">▶️ Avvia</button>
+        <button id="stop" class="ghost">⏹ Stop</button>
+        <button id="export" class="accent">💾 Esporta WAV</button>
+      </div>
+      <small>Tip: l’esportazione registra automaticamente la base per la durata scelta (in misure) e scarica un file .wav.</small>
+    </section>
+
+    <section class="panel">
+      <details>
+        <summary>Impostazioni avanzate</summary>
+        <div class="grid">
+          <label>Forza batteria
+            <input id="drumLevel" type="range" min="-12" max="6" step="1" value="-2"/>
+            <span id="drumLevelVal">-2 dB</span>
+          </label>
+          <label>Forza basso
+            <input id="bassLevel" type="range" min="-12" max="6" step="1" value="-3"/>
+            <span id="bassLevelVal">-3 dB</span>
+          </label>
+          <label>Forza accordi
+            <input id="chordLevel" type="range" min="-12" max="6" step="1" value="-4"/>
+            <span id="chordLevelVal">-4 dB</span>
+          </label>
+        </div>
+      </details>
+    </section>
+
+  </main>
+
+  <footer>
+    <p>BaseMaker — creato per aiutarti a cantare su basi originali. Funziona offline dopo l’installazione. ❤️</p>
+  </footer>
+
+  <script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js');
+    });
+  }
+  // PWA install prompt
+  let deferredPrompt;
+  const installBtn = document.getElementById('installBtn');
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    installBtn.hidden = false;
+  });
+  installBtn?.addEventListener('click', async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    await deferredPrompt.userChoice;
+    deferredPrompt = null;
+    installBtn.hidden = true;
+  });
+  </script>
+</body>
+</html>
